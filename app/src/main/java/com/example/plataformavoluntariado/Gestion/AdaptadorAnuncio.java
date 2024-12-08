@@ -7,6 +7,8 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.plataformavoluntariado.Activities.MainActivity;
@@ -53,10 +55,14 @@ public class AdaptadorAnuncio extends RecyclerView.Adapter<AdaptadorAnuncio.Anun
         holder.checkboxApuntado.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
                 anuncios.add(anuncio);
+                Toast.makeText(buttonView.getContext(), "Anuncio marcado", Toast.LENGTH_SHORT).show();
+                preferencesManager.saveAnuncios(anuncios);
             } else {
                 anuncios.remove(anuncio);
+                Toast.makeText(buttonView.getContext(), "Anuncio desmarcado", Toast.LENGTH_SHORT).show();
+                preferencesManager.saveAnuncios(anuncios);
             }
-            preferencesManager.saveAnuncios(anuncios);
+            //preferencesManager.saveAnuncios(anuncios);
             listener.onItemClick(anuncio, isChecked);
         });
 
