@@ -9,7 +9,7 @@ public class Anuncio implements Parcelable {
     private String tipo;
     private String ciudad;
     private String fecha;
-    private boolean isChecked;
+    private boolean checked;
 
     public Anuncio() {}
 
@@ -19,7 +19,7 @@ public class Anuncio implements Parcelable {
         tipo = in.readString();
         ciudad = in.readString();
         fecha = in.readString();
-        isChecked = in.readByte() != 0;
+        checked = in.readByte() != 0;
     }
 
     public static final Creator<Anuncio> CREATOR = new Creator<Anuncio>() {
@@ -66,10 +66,10 @@ public class Anuncio implements Parcelable {
         this.fecha = fecha;
     }
     public boolean getChecked() {
-        return isChecked;
+        return checked;
     }
     public void setChecked(boolean checked) {
-        isChecked = checked;
+        this.checked = checked;
     }
 
     @Override
@@ -84,6 +84,6 @@ public class Anuncio implements Parcelable {
         dest.writeString(tipo);
         dest.writeString(ciudad);
         dest.writeString(fecha);
-        dest.writeByte((byte) (isChecked ? 1 : 0));
+        dest.writeByte((byte) (checked ? 1 : 0));
     }
 }

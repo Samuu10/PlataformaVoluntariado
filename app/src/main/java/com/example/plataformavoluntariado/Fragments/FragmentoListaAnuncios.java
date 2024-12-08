@@ -35,15 +35,29 @@ public class FragmentoListaAnuncios extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        // Inflamos el layout para este fragmento e instanciamos los elementos de la vista
-        View view = inflater.inflate(R.layout.fragmento_lista_apuntados, container, false);
+        View view = inflater.inflate(R.layout.fragmento_lista_anuncios, container, false);
         recyclerView = view.findViewById(R.id.recycler_view_anuncios);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         preferencesManager = new PreferencesManager(requireContext());
-        preferencesManager.loadAnuncios(null);
+
+        new FirebaseHelper().cargarAnuncios(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Anuncio> anuncios = new ArrayList<>();
+                for (DataSnapshot keyNode : dataSnapshot.getChildren()) {
+                    Anuncio anuncio = keyNode.getValue(Anuncio.class);
+                    anuncios.add(anuncio);
+                }
+                adaptadorAnuncio = new AdaptadorAnuncio(anuncios, (anuncio, isChecked) -> {}, preferencesManager);
+                recyclerView.setAdapter(adaptadorAnuncio);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
         return view;
     }
-
 
     //Metodo para gestionar la pausa del fragmento y liberar recursos
     @Override

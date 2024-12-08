@@ -33,10 +33,9 @@ public class FragmentoListaApuntados extends Fragment implements PreferencesMana
         return view;
     }
 
-    @Override
     public void onAnunciosLoaded(List<Anuncio> anuncios) {
         List<Anuncio> apuntados = anuncios.stream().filter(Anuncio::getChecked).collect(Collectors.toList());
-        adaptadorAnuncio = new AdaptadorAnuncio(apuntados, preferencesManager);
+        adaptadorAnuncio = new AdaptadorAnuncio(apuntados, (anuncio, isChecked) -> {}, preferencesManager);
         recyclerView.setAdapter(adaptadorAnuncio);
     }
 
