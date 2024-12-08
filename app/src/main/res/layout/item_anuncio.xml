@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/item_background"
+    android:layout_margin="10dp"
+    android:padding="12dp">
+
+    <ImageView
+        android:id="@+id/tipo_imagen"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="12dp"
+        android:contentDescription="@string/tipo_imagen_desc" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/titulo_anuncio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:text="Título"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/descripcion_anuncio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Descripción"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/ciudad_anuncio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ciudad"
+            android:textColor="@color/gray"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/fecha_anuncio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fecha"
+            android:textColor="@color/gray"
+            android:textSize="14sp" />
+    </LinearLayout>
+</LinearLayout>

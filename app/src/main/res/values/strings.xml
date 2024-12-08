@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">PlataformaVoluntariado</string>
+    <string name="app_name">Plataforma de Voluntariado</string>
+    <string name="tipo_imagen_desc">Tipo de voluntariado</string>
 </resources>
