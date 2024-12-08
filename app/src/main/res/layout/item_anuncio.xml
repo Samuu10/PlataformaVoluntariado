@@ -5,21 +5,43 @@
     android:layout_height="wrap_content"
     android:background="@drawable/item_background"
     android:layout_margin="10dp"
-    android:padding="12dp">
-
-    <ImageView
-        android:id="@+id/tipo_imagen"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="12dp"
-        android:contentDescription="@string/tipo_imagen_desc" />
+    android:padding="10dp">
 
     <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/tipo_imagen"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@string/tipo_imagen_desc" />
+
+            <CheckBox
+                android:id="@+id/checkbox_apuntado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:text="Apuntarse" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginLeft="30dp"
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/titulo_anuncio"
@@ -35,6 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Descripción"
+            android:layout_marginTop="5dp"
             android:textColor="@color/black"
             android:textSize="14sp" />
 
@@ -43,6 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ciudad"
+            android:layout_marginTop="5dp"
             android:textColor="@color/gray"
             android:textSize="14sp" />
 

@@ -3,25 +3,25 @@ package com.example.plataformavoluntariado.Gestion;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.plataformavoluntariado.Activities.MainActivity;
 import com.example.plataformavoluntariado.R;
+import com.example.plataformavoluntariado.Almacenamiento.PreferencesManager;
 import java.util.List;
 
 public class AdaptadorAnuncio extends RecyclerView.Adapter<AdaptadorAnuncio.AnuncioViewHolder> {
 
     private List<Anuncio> anuncios;
-    private OnItemClickListener listener;
+    private PreferencesManager preferencesManager;
 
-    public interface OnItemClickListener {
-        void onItemClick(Anuncio anuncio);
-    }
-
-    public AdaptadorAnuncio(List<Anuncio> anuncios, OnItemClickListener listener) {
+    public AdaptadorAnuncio(List<Anuncio> anuncios, PreferencesManager preferencesManager) {
         this.anuncios = anuncios;
-        this.listener = listener;
+        this.preferencesManager = preferencesManager;
     }
 
     @NonNull
@@ -37,9 +37,11 @@ public class AdaptadorAnuncio extends RecyclerView.Adapter<AdaptadorAnuncio.Anun
         holder.titulo.setText(anuncio.getTitulo());
         holder.descripcion.setText(anuncio.getDescripcion());
         holder.ciudad.setText("- " + anuncio.getCiudad());
-        holder.fecha.setText("- " +anuncio.getFecha());
+        holder.fecha.setText("- " + anuncio.getFecha());
+        holder.checkboxApuntado.setOnCheckedChangeListener(null);
+        holder.checkboxApuntado.setChecked(anuncio.getChecked());
 
-        // Set image based on the type of voluntariado
+        //Establecemos la imagen del item según el tipo de anuncio
         switch (anuncio.getTipo()) {
             case "educativo":
                 holder.tipoImagen.setImageResource(R.drawable.logo_educativo);
@@ -60,17 +62,30 @@ public class AdaptadorAnuncio extends RecyclerView.Adapter<AdaptadorAnuncio.Anun
                 break;
         }
 
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(anuncio));
+        holder.checkboxApuntado.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            anuncio.setChecked(isChecked);
+            preferencesManager.loadAnuncios(loadedAnuncios -> {
+                for (Anuncio a : loadedAnuncios) {
+                    if (a.equals(anuncio)) {
+                        a.setChecked(anuncio.getChecked());
+                        break;
+                    }
+                }
+                preferencesManager.saveAnuncios(loadedAnuncios);
+                ((MainActivity) holder.itemView.getContext()).actualizarFragmentos(loadedAnuncios);
+            });
+        });
     }
 
     @Override
     public int getItemCount() {
-        return anuncios != null ? anuncios.size() : 0;
+        return anuncios.size();
     }
 
     public static class AnuncioViewHolder extends RecyclerView.ViewHolder {
         TextView titulo, descripcion, ciudad, fecha;
         ImageView tipoImagen;
+        CheckBox checkboxApuntado;
 
         public AnuncioViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,6 +94,15 @@ public class AdaptadorAnuncio extends RecyclerView.Adapter<AdaptadorAnuncio.Anun
             ciudad = itemView.findViewById(R.id.ciudad_anuncio);
             fecha = itemView.findViewById(R.id.fecha_anuncio);
             tipoImagen = itemView.findViewById(R.id.tipo_imagen);
+            checkboxApuntado = itemView.findViewById(R.id.checkbox_apuntado);
         }
+    }
+
+    //Getters & Setters
+    public List<Anuncio> getAnuncios() {
+        return anuncios;
+    }
+    public void setAnuncios(List<Anuncio> anuncios) {
+        this.anuncios = anuncios;
     }
 }
