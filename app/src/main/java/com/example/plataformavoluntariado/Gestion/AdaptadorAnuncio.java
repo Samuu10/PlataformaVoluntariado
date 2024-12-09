@@ -3,17 +3,18 @@ package com.example.plataformavoluntariado.Gestion;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.plataformavoluntariado.Activities.MainActivity;
+
 import com.example.plataformavoluntariado.R;
 import com.example.plataformavoluntariado.Almacenamiento.PreferencesManager;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.List;
 
 public class AdaptadorAnuncio extends RecyclerView.Adapter<AdaptadorAnuncio.AnuncioViewHolder> {
@@ -41,50 +42,54 @@ public class AdaptadorAnuncio extends RecyclerView.Adapter<AdaptadorAnuncio.Anun
 
     @Override
     public void onBindViewHolder(@NonNull AnuncioViewHolder holder, int position) {
-
-        //Establecemos los TextView con los datos del anuncio
         Anuncio anuncio = anuncios.get(position);
         holder.titulo.setText(anuncio.getTitulo());
         holder.descripcion.setText(anuncio.getDescripcion());
         holder.ciudad.setText("- " + anuncio.getCiudad());
         holder.fecha.setText("- " + anuncio.getFecha());
 
-        //Establecemos el estado del CheckBox
         holder.checkboxApuntado.setOnCheckedChangeListener(null);
         holder.checkboxApuntado.setChecked(anuncio.getChecked());
         holder.checkboxApuntado.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(isChecked){
-                anuncios.add(anuncio);
-                Toast.makeText(buttonView.getContext(), "Anuncio marcado", Toast.LENGTH_SHORT).show();
-                preferencesManager.saveAnuncios(anuncios);
-            } else {
-                anuncios.remove(anuncio);
-                Toast.makeText(buttonView.getContext(), "Anuncio desmarcado", Toast.LENGTH_SHORT).show();
-                preferencesManager.saveAnuncios(anuncios);
-            }
-            //preferencesManager.saveAnuncios(anuncios);
-            listener.onItemClick(anuncio, isChecked);
+            anuncio.setChecked(isChecked);
+            preferencesManager.loadAnuncios(loadedAnuncios -> {
+                for (Anuncio a : loadedAnuncios) {
+                    if (a.equals(anuncio)) {
+                        a.setChecked(anuncio.getChecked());
+                        break;
+                    }
+                }
+                preferencesManager.saveAnuncios(loadedAnuncios);
+                listener.onItemClick(anuncio, isChecked);
+                if (anuncio.getId() != null) {
+                    updateFirebase(anuncio);
+                }
+            });
         });
 
-        //Establecemos la imagen del item según el tipo de anuncio
-        switch (anuncio.getTipo()) {
+        int imageResource = getImageResource(anuncio.getTipo());
+        holder.tipoImagen.setImageResource(imageResource);
+    }
+
+    private void updateFirebase(Anuncio anuncio) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("anuncios").child(anuncio.getId());
+        databaseReference.child("checked").setValue(anuncio.getChecked());
+    }
+
+    private int getImageResource(String tipo) {
+        switch (tipo) {
             case "educativo":
-                holder.tipoImagen.setImageResource(R.drawable.logo_educativo);
-                break;
+                return R.drawable.logo_educativo;
             case "social":
-                holder.tipoImagen.setImageResource(R.drawable.logo_social);
-                break;
+                return R.drawable.logo_social;
             case "medioambiental":
-                holder.tipoImagen.setImageResource(R.drawable.logo_medioambiental);
-                break;
+                return R.drawable.logo_medioambiental;
             case "cultural":
-                holder.tipoImagen.setImageResource(R.drawable.logo_cultural);
-                break;
+                return R.drawable.logo_cultural;
             case "sanitario":
-                holder.tipoImagen.setImageResource(R.drawable.logo_sanitario);
-                break;
+                return R.drawable.logo_sanitario;
             default:
-                break;
+                return R.drawable.default_logo;
         }
     }
 

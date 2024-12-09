@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Anuncio implements Parcelable {
+
+    private String id;
     private String titulo;
     private String descripcion;
     private String tipo;
@@ -14,6 +16,7 @@ public class Anuncio implements Parcelable {
     public Anuncio() {}
 
     protected Anuncio(Parcel in) {
+        id = in.readString();
         titulo = in.readString();
         descripcion = in.readString();
         tipo = in.readString();
@@ -71,6 +74,13 @@ public class Anuncio implements Parcelable {
     public void setChecked(boolean checked) {
         this.checked = checked;
     }
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
+
 
     @Override
     public int describeContents() {
@@ -79,6 +89,7 @@ public class Anuncio implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(titulo);
         dest.writeString(descripcion);
         dest.writeString(tipo);
