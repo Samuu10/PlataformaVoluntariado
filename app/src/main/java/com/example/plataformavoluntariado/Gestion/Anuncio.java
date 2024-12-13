@@ -3,8 +3,10 @@ package com.example.plataformavoluntariado.Gestion;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+//Clase que representa un anuncio
 public class Anuncio implements Parcelable {
 
+    //Atributos
     private String id;
     private String titulo;
     private String descripcion;
@@ -13,8 +15,10 @@ public class Anuncio implements Parcelable {
     private String fecha;
     private boolean checked;
 
+    //Constructor sin parametros
     public Anuncio() {}
 
+    //Constructor con parametros
     protected Anuncio(Parcel in) {
         id = in.readString();
         titulo = in.readString();
@@ -25,6 +29,7 @@ public class Anuncio implements Parcelable {
         checked = in.readByte() != 0;
     }
 
+    //Metodo para crear un anuncio a partir de un parcel
     public static final Creator<Anuncio> CREATOR = new Creator<Anuncio>() {
         @Override
         public Anuncio createFromParcel(Parcel in) {
@@ -37,7 +42,7 @@ public class Anuncio implements Parcelable {
         }
     };
 
-    // Getters & Setters
+    //Getters & Setters
     public String getTitulo() {
         return titulo;
     }
@@ -81,12 +86,13 @@ public class Anuncio implements Parcelable {
         this.id = id;
     }
 
-
+    //Metodo describeContents para Parcelable
     @Override
     public int describeContents() {
         return 0;
     }
 
+    //Metodo writeToParcel para Parcelable
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);

@@ -6,33 +6,30 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.plataformavoluntariado.R;
-import com.example.plataformavoluntariado.Almacenamiento.PreferencesManager;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.List;
 
+//Adaptador para la lista de anuncios
 public class AdaptadorAnuncio extends RecyclerView.Adapter<AdaptadorAnuncio.AnuncioViewHolder> {
 
+    //Variables
     private List<Anuncio> anuncios;
     private OnItemClickListener listener;
-    private PreferencesManager preferencesManager;
 
-    public interface OnItemClickListener {
-        void onItemClick(Anuncio anuncio, boolean isChecked);
-    }
-
-    public AdaptadorAnuncio(List<Anuncio> anuncios, OnItemClickListener listener, PreferencesManager preferencesManager) {
+    //Constructor
+    public AdaptadorAnuncio(List<Anuncio> anuncios, OnItemClickListener listener) {
         this.anuncios = anuncios;
         this.listener = listener;
-        this.preferencesManager = preferencesManager;
     }
 
+    //Interfaz para gestionar los clicks en los checkbox de los anuncios
+    public interface OnItemClickListener {
+        void onItemClick(int posicion, boolean isChecked);
+    }
+
+    //Metodo para crear la vista de los anuncios
     @NonNull
     @Override
     public AnuncioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -40,6 +37,7 @@ public class AdaptadorAnuncio extends RecyclerView.Adapter<AdaptadorAnuncio.Anun
         return new AnuncioViewHolder(view);
     }
 
+    //Metodo para asignar los valores de los campo de los anuncios a los elementos de la vista
     @Override
     public void onBindViewHolder(@NonNull AnuncioViewHolder holder, int position) {
         Anuncio anuncio = anuncios.get(position);
@@ -47,35 +45,14 @@ public class AdaptadorAnuncio extends RecyclerView.Adapter<AdaptadorAnuncio.Anun
         holder.descripcion.setText(anuncio.getDescripcion());
         holder.ciudad.setText("- " + anuncio.getCiudad());
         holder.fecha.setText("- " + anuncio.getFecha());
-
-        holder.checkboxApuntado.setOnCheckedChangeListener(null);
+        holder.checkboxApuntado.setOnCheckedChangeListener(null); // Remove previous listener
         holder.checkboxApuntado.setChecked(anuncio.getChecked());
-        holder.checkboxApuntado.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            anuncio.setChecked(isChecked);
-            preferencesManager.loadAnuncios(loadedAnuncios -> {
-                for (Anuncio a : loadedAnuncios) {
-                    if (a.equals(anuncio)) {
-                        a.setChecked(anuncio.getChecked());
-                        break;
-                    }
-                }
-                preferencesManager.saveAnuncios(loadedAnuncios);
-                listener.onItemClick(anuncio, isChecked);
-                if (anuncio.getId() != null) {
-                    updateFirebase(anuncio);
-                }
-            });
-        });
-
+        holder.checkboxApuntado.setOnCheckedChangeListener((buttonView, isChecked) -> listener.onItemClick(position, isChecked));
         int imageResource = getImageResource(anuncio.getTipo());
         holder.tipoImagen.setImageResource(imageResource);
     }
 
-    private void updateFirebase(Anuncio anuncio) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("anuncios").child(anuncio.getId());
-        databaseReference.child("checked").setValue(anuncio.getChecked());
-    }
-
+    //Metodo para asignar la imagen correspondiente a cada tipo de anuncio
     private int getImageResource(String tipo) {
         switch (tipo) {
             case "educativo":
@@ -93,11 +70,13 @@ public class AdaptadorAnuncio extends RecyclerView.Adapter<AdaptadorAnuncio.Anun
         }
     }
 
+    //Metodo para obtener el numero de anuncios
     @Override
     public int getItemCount() {
         return anuncios.size();
     }
 
+    //Clase para gestionar los elementos de la vista de los anuncios
     public static class AnuncioViewHolder extends RecyclerView.ViewHolder {
 
         //Variables
@@ -105,10 +84,9 @@ public class AdaptadorAnuncio extends RecyclerView.Adapter<AdaptadorAnuncio.Anun
         ImageView tipoImagen;
         CheckBox checkboxApuntado;
 
+        //Constructor
         public AnuncioViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            //Establecemos las vistas
             titulo = itemView.findViewById(R.id.titulo_anuncio);
             descripcion = itemView.findViewById(R.id.descripcion_anuncio);
             ciudad = itemView.findViewById(R.id.ciudad_anuncio);
