@@ -1,4 +1,23 @@
 <resources>
     <string name="app_name">Plataforma de Voluntariado</string>
     <string name="tipo_imagen_desc">Tipo de voluntariado</string>
+    <string name="select_city">Selecciona una ciudad</string>
+    <string name="select_type">Selecciona un tipo</string>
+    <string-array name="ciudades_array">
+        <item>Todas</item>
+        <item>Madrid</item>
+        <item>Barcelona</item>
+        <item>Sevilla</item>
+        <item>Valencia</item>
+        <item>Mallorca</item>
+        <item>Gran Canaria</item>
+    </string-array>
+    <string-array name="tipos_array">
+        <item>Todos</item>
+        <item>educativo</item>
+        <item>social</item>
+        <item>medioambiental</item>
+        <item>cultural</item>
+        <item>sanitario</item>
+    </string-array>
 </resources>

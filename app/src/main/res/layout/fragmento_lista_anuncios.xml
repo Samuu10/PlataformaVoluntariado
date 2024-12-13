@@ -14,10 +14,40 @@
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"/>
 
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/titulo"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
+        <Spinner
+            android:id="@+id/spinner_ciudad"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="20dp"
+            style="@style/SpinnerStyle"
+            android:padding="7dp"
+            android:prompt="@string/select_city" />
+
+        <Spinner
+            android:id="@+id/spinner_tipo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="20dp"
+            style="@style/SpinnerStyle"
+            android:padding="7dp"
+            android:prompt="@string/select_type" />
+
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_anuncios"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/titulo"
+        android:layout_below="@id/linearLayout"
         android:layout_margin="20dp" />
 </RelativeLayout>

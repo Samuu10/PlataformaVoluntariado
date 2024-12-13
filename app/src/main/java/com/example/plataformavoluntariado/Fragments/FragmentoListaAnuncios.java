@@ -6,6 +6,10 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -31,6 +35,8 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
     private RecyclerView recyclerView;
     private PreferencesManager preferencesManager;
     private Handler handler;
+    private List<Anuncio> anuncios;
+    private Spinner spinnerCiudad, spinnerTipo;
 
     //Metodo para crear la vista del fragmento
     @Nullable
@@ -41,8 +47,66 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         preferencesManager = PreferencesManager.getInstance(requireContext());
         handler = new Handler(Looper.getMainLooper());
+        spinnerCiudad = view.findViewById(R.id.spinner_ciudad);
+        spinnerTipo = view.findViewById(R.id.spinner_tipo);
+        setupSpinners();
         cargarAnuncios();
         return view;
+    }
+
+    private void setupSpinners() {
+        ArrayAdapter<CharSequence> adapterCiudad = ArrayAdapter.createFromResource(getContext(),
+                R.array.ciudades_array, android.R.layout.simple_spinner_item);
+        adapterCiudad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCiudad.setAdapter(adapterCiudad);
+
+        ArrayAdapter<CharSequence> adapterTipo = ArrayAdapter.createFromResource(getContext(),
+                R.array.tipos_array, android.R.layout.simple_spinner_item);
+        adapterTipo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipo.setAdapter(adapterTipo);
+
+        spinnerCiudad.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filtrarAnuncios();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        spinnerTipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                filtrarAnuncios();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    private void filtrarAnuncios() {
+        if (anuncios == null) {
+            return;
+        }
+
+        String ciudadSeleccionada = spinnerCiudad.getSelectedItem().toString();
+        String tipoSeleccionado = spinnerTipo.getSelectedItem().toString();
+
+        List<Anuncio> anunciosFiltrados = new ArrayList<>();
+        for (Anuncio anuncio : anuncios) {
+            boolean coincideCiudad = ciudadSeleccionada.equals("Todas") || anuncio.getCiudad().equals(ciudadSeleccionada);
+            boolean coincideTipo = tipoSeleccionado.equals("Todos") || anuncio.getTipo().equals(tipoSeleccionado);
+            if (coincideCiudad && coincideTipo) {
+                anunciosFiltrados.add(anuncio);
+            }
+        }
+
+        adaptadorAnuncio.setAnuncios(anunciosFiltrados);
+        adaptadorAnuncio.notifyDataSetChanged();
     }
 
     //Metodo para cargar los anuncios de Firebase
