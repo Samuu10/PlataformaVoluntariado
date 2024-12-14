@@ -89,8 +89,8 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
     }
 
     private void filtrarAnuncios() {
-        if (anuncios == null) {
-            return;
+        if (anuncios == null || adaptadorAnuncio == null) {
+            return; // Asegúrate de que los datos están listos
         }
 
         String ciudadSeleccionada = spinnerCiudad.getSelectedItem().toString();
@@ -98,39 +98,53 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
 
         List<Anuncio> anunciosFiltrados = new ArrayList<>();
         for (Anuncio anuncio : anuncios) {
-            boolean coincideCiudad = ciudadSeleccionada.equals("Todas") || anuncio.getCiudad().equals(ciudadSeleccionada);
-            boolean coincideTipo = tipoSeleccionado.equals("Todos") || anuncio.getTipo().equals(tipoSeleccionado);
+            boolean coincideCiudad = "Todas".equals(ciudadSeleccionada) || anuncio.getCiudad().equals(ciudadSeleccionada);
+            boolean coincideTipo = "Todos".equals(tipoSeleccionado) || anuncio.getTipo().equals(tipoSeleccionado);
+
             if (coincideCiudad && coincideTipo) {
                 anunciosFiltrados.add(anuncio);
             }
         }
 
+        // Actualiza los datos en el adaptador y refleja el cambio en la UI
         adaptadorAnuncio.setAnuncios(anunciosFiltrados);
         adaptadorAnuncio.notifyDataSetChanged();
     }
+
 
     //Metodo para cargar los anuncios de Firebase
     private void cargarAnuncios() {
         new FirebaseHelper().cargarAnuncios(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Anuncio> anuncios = new ArrayList<>();
+                anuncios = new ArrayList<>(); // Reemplazar cualquier instancia previa
                 for (DataSnapshot keyNode : dataSnapshot.getChildren()) {
                     Anuncio anuncio = keyNode.getValue(Anuncio.class);
-                    if (preferencesManager.getAnunciosMarcados().contains(anuncio)) {
-                        anuncio.setChecked(true);
+                    if (anuncio != null) { // Asegúrate de no agregar nulos
+                        if (preferencesManager.getAnunciosMarcados().contains(anuncio)) {
+                            anuncio.setChecked(true);
+                        }
+                        anuncios.add(anuncio);
                     }
-                    anuncios.add(anuncio);
                 }
-                adaptadorAnuncio = new AdaptadorAnuncio(anuncios, FragmentoListaAnuncios.this);
-                recyclerView.setAdapter(adaptadorAnuncio);
+
+                // Configurar adaptador si aún no existe
+                if (adaptadorAnuncio == null) {
+                    adaptadorAnuncio = new AdaptadorAnuncio(new ArrayList<>(anuncios), FragmentoListaAnuncios.this);
+                    recyclerView.setAdapter(adaptadorAnuncio);
+                }
+
+                // Aplicar filtro inicial
+                filtrarAnuncios();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                // Maneja errores si es necesario
             }
         });
     }
+
 
     //Metodo para gestionar los checkbox de los anuncios
     @Override
