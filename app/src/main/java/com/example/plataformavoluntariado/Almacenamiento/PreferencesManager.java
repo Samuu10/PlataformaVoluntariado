@@ -59,6 +59,10 @@ public class PreferencesManager {
         }
     }
 
+    public boolean isAnuncioMarcado(Anuncio anuncio) {
+        return anunciosMarcados.contains(anuncio);
+    }
+
     //Metodo para guardar los anuncios en sharedPreferences
     private void guardarAnuncios() {
         SharedPreferences.Editor editor = sharedPreferences.edit();

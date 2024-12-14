@@ -45,9 +45,18 @@ public class AdaptadorAnuncio extends RecyclerView.Adapter<AdaptadorAnuncio.Anun
         holder.descripcion.setText(anuncio.getDescripcion());
         holder.ciudad.setText("- " + anuncio.getCiudad());
         holder.fecha.setText("- " + anuncio.getFecha());
+
+        // Set initial text based on the checked state
+        holder.checkboxApuntado.setText(anuncio.getChecked() ? "Apuntado" : "Apuntarse");
+
         holder.checkboxApuntado.setOnCheckedChangeListener(null); // Remove previous listener
         holder.checkboxApuntado.setChecked(anuncio.getChecked());
-        holder.checkboxApuntado.setOnCheckedChangeListener((buttonView, isChecked) -> listener.onItemClick(position, isChecked));
+        holder.checkboxApuntado.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            listener.onItemClick(position, isChecked);
+            // Update text based on the new checked state
+            holder.checkboxApuntado.setText(isChecked ? "Apuntado" : "Apuntarse");
+        });
+
         int imageResource = getImageResource(anuncio.getTipo());
         holder.tipoImagen.setImageResource(imageResource);
     }

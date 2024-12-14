@@ -120,29 +120,43 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
                 anuncios = new ArrayList<>(); // Reemplazar cualquier instancia previa
                 for (DataSnapshot keyNode : dataSnapshot.getChildren()) {
                     Anuncio anuncio = keyNode.getValue(Anuncio.class);
-                    if (anuncio != null) { // Asegúrate de no agregar nulos
-                        if (preferencesManager.getAnunciosMarcados().contains(anuncio)) {
+                    if (anuncio != null) {
+                        // Sincronizar estado del anuncio con las preferencias
+                        if (preferencesManager.isAnuncioMarcado(anuncio)) {
                             anuncio.setChecked(true);
+                        } else {
+                            anuncio.setChecked(false);
                         }
                         anuncios.add(anuncio);
                     }
                 }
 
-                // Configurar adaptador si aún no existe
                 if (adaptadorAnuncio == null) {
                     adaptadorAnuncio = new AdaptadorAnuncio(new ArrayList<>(anuncios), FragmentoListaAnuncios.this);
                     recyclerView.setAdapter(adaptadorAnuncio);
+                } else {
+                    adaptadorAnuncio.setAnuncios(anuncios);
+                    adaptadorAnuncio.notifyDataSetChanged();
                 }
 
-                // Aplicar filtro inicial
-                filtrarAnuncios();
+                filtrarAnuncios(); // Aplica filtros iniciales si corresponde
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Maneja errores si es necesario
+                // Manejo de errores
             }
         });
+    }
+
+
+    public void actualizarLista() {
+        if (adaptadorAnuncio != null && anuncios != null) {
+            for (Anuncio anuncio : anuncios) {
+                anuncio.setChecked(preferencesManager.isAnuncioMarcado(anuncio));
+            }
+            adaptadorAnuncio.notifyDataSetChanged();
+        }
     }
 
 
@@ -150,22 +164,36 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
     @Override
     public void onItemClick(int posicion, boolean isChecked) {
         Anuncio anuncio = adaptadorAnuncio.getAnuncios().get(posicion);
-        String mensaje = isChecked ? "¿Estás seguro de que quieres marcar este anuncio?" : "¿Estás seguro de que quieres desmarcar este anuncio?";
+        String mensaje = isChecked
+                ? "¿Estás seguro de que quieres apuntarte a este voluntariado?"
+                : "¿Estás seguro de que quieres desapuntarte de este voluntariado?";
+
         new AlertDialog.Builder(requireContext())
                 .setTitle("Confirmar")
                 .setMessage(mensaje)
                 .setPositiveButton("Confirmar", (dialog, which) -> {
+                    // Marcar o desmarcar anuncio en la lista principal
                     anuncio.setChecked(isChecked);
                     if (isChecked) {
                         preferencesManager.marcarAnuncio(anuncio);
                     } else {
                         preferencesManager.desmarcarAnuncio(anuncio);
                     }
-                    handler.post(() -> adaptadorAnuncio.notifyItemChanged(posicion));
+
+                    // Notificar cambios en el adaptador actual
+                    adaptadorAnuncio.notifyItemChanged(posicion);
+
+                    // Actualizar otro fragmento, si está visible
+                    FragmentoListaApuntados fragmentoListaApuntados = (FragmentoListaApuntados) getParentFragmentManager()
+                            .findFragmentByTag("FragmentoListaApuntados");
+                    if (fragmentoListaApuntados != null) {
+                        fragmentoListaApuntados.actualizarLista();
+                    }
                 })
                 .setNegativeButton("Cancelar", (dialog, which) -> {
+                    // Restaurar estado original
                     anuncio.setChecked(!isChecked);
-                    handler.post(() -> adaptadorAnuncio.notifyItemChanged(posicion));
+                    adaptadorAnuncio.notifyItemChanged(posicion);
                 })
                 .show();
     }

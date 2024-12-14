@@ -103,4 +103,19 @@ public class Anuncio implements Parcelable {
         dest.writeString(fecha);
         dest.writeByte((byte) (checked ? 1 : 0));
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Anuncio anuncio = (Anuncio) obj;
+        // Comparar por ID u otro atributo único
+        return id != null && id.equals(anuncio.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
 }

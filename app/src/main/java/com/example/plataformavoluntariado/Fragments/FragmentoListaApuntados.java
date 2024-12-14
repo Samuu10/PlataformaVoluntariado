@@ -39,15 +39,37 @@ public class FragmentoListaApuntados extends Fragment implements AdaptadorAnunci
     //Metodo para cargar los anuncios marcados por el usuario
     private void cargarAnunciosMarcados() {
         List<Anuncio> anunciosMarcados = preferencesManager.getAnunciosMarcados();
-        adaptadorAnuncio = new AdaptadorAnuncio(anunciosMarcados, this);
-        recyclerView.setAdapter(adaptadorAnuncio);
+        for (Anuncio anuncio : anunciosMarcados) {
+            anuncio.setChecked(true); // Sync estado
+        }
+        if (adaptadorAnuncio == null) {
+            adaptadorAnuncio = new AdaptadorAnuncio(anunciosMarcados, this);
+            recyclerView.setAdapter(adaptadorAnuncio);
+        } else {
+            adaptadorAnuncio.setAnuncios(anunciosMarcados);
+            adaptadorAnuncio.notifyDataSetChanged();
+        }
+    }
+
+    public void actualizarLista() {
+        if (adaptadorAnuncio != null) {
+            List<Anuncio> anunciosMarcados = preferencesManager.getAnunciosMarcados();
+            for (Anuncio anuncio : anunciosMarcados) {
+                anuncio.setChecked(true); // Sync estado
+            }
+            adaptadorAnuncio.setAnuncios(anunciosMarcados);
+            adaptadorAnuncio.notifyDataSetChanged();
+        }
     }
 
     //Metodo para gestionar los checkbox de los anuncios
     @Override
     public void onItemClick(int posicion, boolean isChecked) {
         Anuncio anuncio = adaptadorAnuncio.getAnuncios().get(posicion);
-        String mensaje = isChecked ? "¿Estás seguro de que quieres marcar este anuncio?" : "¿Estás seguro de que quieres desmarcar este anuncio?";
+        String mensaje = isChecked
+                ? "¿Estás seguro de que quieres apuntarte a este voluntariado?"
+                : "¿Estás seguro de que quieres desapuntarte de este voluntariado?";
+
         new AlertDialog.Builder(requireContext())
                 .setTitle("Confirmar")
                 .setMessage(mensaje)
@@ -59,6 +81,12 @@ public class FragmentoListaApuntados extends Fragment implements AdaptadorAnunci
                         preferencesManager.desmarcarAnuncio(anuncio);
                     }
                     adaptadorAnuncio.notifyItemChanged(posicion);
+
+                    FragmentoListaAnuncios fragmentoListaAnuncios = (FragmentoListaAnuncios) getParentFragmentManager()
+                            .findFragmentByTag("FragmentoListaAnuncios");
+                    if (fragmentoListaAnuncios != null) {
+                        fragmentoListaAnuncios.actualizarLista();
+                    }
                 })
                 .setNegativeButton("Cancelar", (dialog, which) -> {
                     anuncio.setChecked(!isChecked);
