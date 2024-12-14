@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.example.plataformavoluntariado.Almacenamiento.PreferencesManager;
 import com.example.plataformavoluntariado.Fragments.FragmentoListaAnuncios;
-import com.example.plataformavoluntariado.Fragments.FragmentoListaApuntados;
+import com.example.plataformavoluntariado.Fragments.FragmentoListaMarcados;
 import com.example.plataformavoluntariado.R;
 
 //Clase principal de la aplicación en la que se gestionan los fragmentos
@@ -35,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         FragmentoListaAnuncios fragmentoListaAnuncios = new FragmentoListaAnuncios();
-        FragmentoListaApuntados fragmentoListaApuntados = new FragmentoListaApuntados();
+        FragmentoListaMarcados fragmentoListaMarcados = new FragmentoListaMarcados();
         fragmentTransaction.add(R.id.fragment_container, fragmentoListaAnuncios, "FragmentoListaAnuncios");
-        fragmentTransaction.add(R.id.fragment_container, fragmentoListaApuntados, "FragmentoListaApuntados");
-        fragmentTransaction.hide(fragmentoListaApuntados);
+        fragmentTransaction.add(R.id.fragment_container, fragmentoListaMarcados, "FragmentoListaMarcados");
+        fragmentTransaction.hide(fragmentoListaMarcados);
         fragmentTransaction.commit();
     }
 
@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private void cambiarLista() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment fragmentToShow = showingSeleccionados ? fragmentManager.findFragmentByTag("FragmentoListaAnuncios") : fragmentManager.findFragmentByTag("FragmentoListaApuntados");
-        Fragment fragmentToHide = showingSeleccionados ? fragmentManager.findFragmentByTag("FragmentoListaApuntados") : fragmentManager.findFragmentByTag("FragmentoListaAnuncios");
+        Fragment fragmentToShow = showingSeleccionados ? fragmentManager.findFragmentByTag("FragmentoListaAnuncios") : fragmentManager.findFragmentByTag("FragmentoListaMarcados");
+        Fragment fragmentToHide = showingSeleccionados ? fragmentManager.findFragmentByTag("FragmentoListaMarcados") : fragmentManager.findFragmentByTag("FragmentoListaAnuncios");
         if (fragmentToShow != null && fragmentToHide != null) {
             fragmentTransaction.hide(fragmentToHide);
             fragmentTransaction.show(fragmentToShow);

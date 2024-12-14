@@ -67,8 +67,12 @@ public class WidgetRemoteViews implements RemoteViewsService.RemoteViewsFactory 
     //Metodo para notificar que los datos del widget han cambiado
     private void notifyAppWidgetViewDataChanged() {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, WidgetAnuncios.class));
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_listview);
+        ComponentName thisAppWidget = new ComponentName(context, WidgetAnuncios.class);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
+
+        if (appWidgetIds != null && appWidgetIds.length > 0) {
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_listview);
+        }
     }
 
     //Metodo onDestroy para la destrucción de las vistas remotas

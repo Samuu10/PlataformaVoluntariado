@@ -17,7 +17,7 @@ import com.example.plataformavoluntariado.Almacenamiento.PreferencesManager;
 import java.util.List;
 
 //Fragmento que muestra la lista de anuncios marcados por el usuario
-public class FragmentoListaApuntados extends Fragment implements AdaptadorAnuncio.OnItemClickListener {
+public class FragmentoListaMarcados extends Fragment implements AdaptadorAnuncio.OnItemClickListener {
 
     //Variables
     private RecyclerView recyclerView;
@@ -28,7 +28,7 @@ public class FragmentoListaApuntados extends Fragment implements AdaptadorAnunci
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragmento_lista_apuntados, container, false);
+        View view = inflater.inflate(R.layout.fragmento_lista_marcados, container, false);
         recyclerView = view.findViewById(R.id.recycler_view_anuncios);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         preferencesManager = PreferencesManager.getInstance(requireContext());

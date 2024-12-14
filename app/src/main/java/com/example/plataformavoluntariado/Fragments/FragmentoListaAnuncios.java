@@ -187,10 +187,10 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
                     }
                     adaptadorAnuncio.notifyItemChanged(posicion);
 
-                    FragmentoListaApuntados fragmentoListaApuntados = (FragmentoListaApuntados) getParentFragmentManager()
-                            .findFragmentByTag("FragmentoListaApuntados");
-                    if (fragmentoListaApuntados != null) {
-                        fragmentoListaApuntados.actualizarLista();
+                    FragmentoListaMarcados fragmentoListaMarcados = (FragmentoListaMarcados) getParentFragmentManager()
+                            .findFragmentByTag("FragmentoListaMarcados");
+                    if (fragmentoListaMarcados != null) {
+                        fragmentoListaMarcados.actualizarLista();
                     }
                 })
                 .setNegativeButton("Cancelar", (dialog, which) -> {
