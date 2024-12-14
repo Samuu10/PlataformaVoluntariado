@@ -51,6 +51,7 @@ public class FragmentoListaApuntados extends Fragment implements AdaptadorAnunci
         }
     }
 
+    //Metodo para actualizar la lista de anuncios
     public void actualizarLista() {
         if (adaptadorAnuncio != null) {
             List<Anuncio> anunciosMarcados = preferencesManager.getAnunciosMarcados();

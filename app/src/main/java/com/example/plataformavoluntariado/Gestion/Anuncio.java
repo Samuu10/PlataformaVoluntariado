@@ -106,22 +106,23 @@ public class Anuncio implements Parcelable {
         dest.writeByte((byte) (checked ? 1 : 0));
     }
 
+    //Metodo equals
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Anuncio anuncio = (Anuncio) obj;
-        // Comparar por ID u otro atributo único
         return id != null && id.equals(anuncio.id);
     }
 
+    //Metodo hashCode
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
 
+    //Metodo para obtener el id de la imagen correspondiente a cada tipo de anuncio para el widget
     public int getTipoImagenResId() {
-        // Devuelve el recurso de la imagen basado en el tipo de voluntariado
         switch (tipo.toLowerCase()) {
             case "educativo":
                 return R.drawable.logo_educativo;

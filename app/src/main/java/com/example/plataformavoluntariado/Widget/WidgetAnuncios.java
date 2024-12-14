@@ -10,8 +10,10 @@ import android.widget.RemoteViews;
 import com.example.plataformavoluntariado.R;
 import com.example.plataformavoluntariado.Activities.MainActivity;
 
+//Clase que representa el widget de la aplicación
 public class WidgetAnuncios extends AppWidgetProvider {
 
+    //Metodo para actualizar el widget y cargar los anuncios
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
@@ -27,6 +29,7 @@ public class WidgetAnuncios extends AppWidgetProvider {
         }
     }
 
+    //Metodo para recibir un intent
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);

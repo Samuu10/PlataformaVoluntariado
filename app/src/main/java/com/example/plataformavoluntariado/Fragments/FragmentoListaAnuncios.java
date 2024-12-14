@@ -54,17 +54,22 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
         return view;
     }
 
+    //Metodo para configurar los spinners del tipo de voluntariado y la ciudad del voluntariado
     private void setupSpinners() {
+
+        //Configuración del spinner de la ciudad
         ArrayAdapter<CharSequence> adapterCiudad = ArrayAdapter.createFromResource(getContext(),
                 R.array.ciudades_array, android.R.layout.simple_spinner_item);
         adapterCiudad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCiudad.setAdapter(adapterCiudad);
 
+        //Configuración del spinner del tipo de voluntariado
         ArrayAdapter<CharSequence> adapterTipo = ArrayAdapter.createFromResource(getContext(),
                 R.array.tipos_array, android.R.layout.simple_spinner_item);
         adapterTipo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTipo.setAdapter(adapterTipo);
 
+        //Listener para el spinner de la ciudad
         spinnerCiudad.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -76,6 +81,7 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
             }
         });
 
+        //Listener para el spinner del tipo de voluntariado
         spinnerTipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -88,9 +94,10 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
         });
     }
 
+    //Metodo para filtrar los anuncios según la ciudad y el tipo de voluntariado seleccionados en los spinners
     private void filtrarAnuncios() {
         if (anuncios == null || adaptadorAnuncio == null) {
-            return; // Asegúrate de que los datos están listos
+            return;
         }
 
         String ciudadSeleccionada = spinnerCiudad.getSelectedItem().toString();
@@ -106,7 +113,7 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
             }
         }
 
-        // Actualiza los datos en el adaptador y refleja el cambio en la UI
+        //Actualizamos el adaptador con los nuevos datos
         adaptadorAnuncio.setAnuncios(anunciosFiltrados);
         adaptadorAnuncio.notifyDataSetChanged();
     }
@@ -117,11 +124,12 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
         new FirebaseHelper().cargarAnuncios(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                anuncios = new ArrayList<>(); // Reemplazar cualquier instancia previa
+                anuncios = new ArrayList<>();
+
+                //Recorremos los anuncios y los añadimos a la lista
                 for (DataSnapshot keyNode : dataSnapshot.getChildren()) {
                     Anuncio anuncio = keyNode.getValue(Anuncio.class);
                     if (anuncio != null) {
-                        // Sincronizar estado del anuncio con las preferencias
                         if (preferencesManager.isAnuncioMarcado(anuncio)) {
                             anuncio.setChecked(true);
                         } else {
@@ -131,6 +139,7 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
                     }
                 }
 
+                //Creamos el adaptador y lo asignamos al recyclerView
                 if (adaptadorAnuncio == null) {
                     adaptadorAnuncio = new AdaptadorAnuncio(new ArrayList<>(anuncios), FragmentoListaAnuncios.this);
                     recyclerView.setAdapter(adaptadorAnuncio);
@@ -139,17 +148,15 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
                     adaptadorAnuncio.notifyDataSetChanged();
                 }
 
-                filtrarAnuncios(); // Aplica filtros iniciales si corresponde
+                filtrarAnuncios();
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Manejo de errores
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
     }
 
-
+    //Metodo para actualizar la lista de anuncios
     public void actualizarLista() {
         if (adaptadorAnuncio != null && anuncios != null) {
             for (Anuncio anuncio : anuncios) {
@@ -158,7 +165,6 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
             adaptadorAnuncio.notifyDataSetChanged();
         }
     }
-
 
     //Metodo para gestionar los checkbox de los anuncios
     @Override
@@ -172,18 +178,15 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
                 .setTitle("Confirmar")
                 .setMessage(mensaje)
                 .setPositiveButton("Confirmar", (dialog, which) -> {
-                    // Marcar o desmarcar anuncio en la lista principal
+
                     anuncio.setChecked(isChecked);
                     if (isChecked) {
                         preferencesManager.marcarAnuncio(anuncio);
                     } else {
                         preferencesManager.desmarcarAnuncio(anuncio);
                     }
-
-                    // Notificar cambios en el adaptador actual
                     adaptadorAnuncio.notifyItemChanged(posicion);
 
-                    // Actualizar otro fragmento, si está visible
                     FragmentoListaApuntados fragmentoListaApuntados = (FragmentoListaApuntados) getParentFragmentManager()
                             .findFragmentByTag("FragmentoListaApuntados");
                     if (fragmentoListaApuntados != null) {
@@ -191,7 +194,6 @@ public class FragmentoListaAnuncios extends Fragment implements AdaptadorAnuncio
                     }
                 })
                 .setNegativeButton("Cancelar", (dialog, which) -> {
-                    // Restaurar estado original
                     anuncio.setChecked(!isChecked);
                     adaptadorAnuncio.notifyItemChanged(posicion);
                 })

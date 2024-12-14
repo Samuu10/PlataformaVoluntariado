@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean showingSeleccionados = false;
     PreferencesManager preferencesManager;
 
+    //Metodo para crear la actividad
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
