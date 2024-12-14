@@ -3,6 +3,8 @@ package com.example.plataformavoluntariado.Gestion;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.plataformavoluntariado.R;
+
 //Clase que representa un anuncio
 public class Anuncio implements Parcelable {
 
@@ -118,4 +120,21 @@ public class Anuncio implements Parcelable {
         return id != null ? id.hashCode() : 0;
     }
 
+    public int getTipoImagenResId() {
+        // Devuelve el recurso de la imagen basado en el tipo de voluntariado
+        switch (tipo.toLowerCase()) {
+            case "educativo":
+                return R.drawable.logo_educativo;
+            case "social":
+                return R.drawable.logo_social;
+            case "medioambiental":
+                return R.drawable.logo_medioambiental;
+            case "cultural":
+                return R.drawable.logo_cultural;
+            case "sanitario":
+                return R.drawable.logo_sanitario;
+            default:
+                return R.drawable.default_logo;
+        }
+    }
 }
